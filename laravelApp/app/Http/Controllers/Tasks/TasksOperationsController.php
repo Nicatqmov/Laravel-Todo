@@ -9,12 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session; // Import the Session facade
 class TasksOperationsController extends Controller
 {
-    public function tasks(){
+    public function tasks()
+    {
         return view('tasks');
     }
 
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $task = $request->input('task');
         $date = $request->input('date');
 
@@ -28,7 +30,7 @@ class TasksOperationsController extends Controller
         $taskId = $newTask->id;
 
 
-        return response()->json(['message' => 'Task and date received successfully',"task_id" => $taskId], 200);
+        return response()->json(['message' => 'Task and date received successfully', "task_id" => $taskId], 200);
     }
 
     public function delete(Request $request)
@@ -47,6 +49,25 @@ class TasksOperationsController extends Controller
         $task->delete();
         return response()->json(['message' => 'Task deleted successfully'], 200);
     }
+
+
+    public function update(Request $request)
+    {
+        $taskID = $request->input('taskID');
+        // Find the task by ID
+        $task = Task::find($taskID);
+
+        if (!$task) {
+            return response()->json(['error' => 'Task not found'], 404);
+        }
+
+        // Update the task
+        $task->task_name = $request->input('newValue');
+        $task->save();
+
+        return response()->json(['message' => 'Task updated successfully'], 200);
+    }
+
 
 
     public function getAllTasks()

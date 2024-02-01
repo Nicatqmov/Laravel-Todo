@@ -29,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tasks', [TasksOperationsController::class, 'getAllTasks'])->name('tasks');
     Route::post('/tasks/add', [TasksOperationsController::class, 'store'])->name('addtask');
     Route::post('/tasks/delete', [TasksOperationsController::class, 'delete'])->name('delete');
+    Route::post('/tasks/update', [TasksOperationsController::class, 'update'])->name('update');
     Route::get('/dashboard', [LoginRegisterController::class, 'dashboard'])->name('dashboard');
     Route::post('/logout', [LoginRegisterController::class, 'logout'])->name('logout');
 });

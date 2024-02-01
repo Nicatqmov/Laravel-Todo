@@ -15,7 +15,7 @@ function addSuccessAlert(message, classNameadd) {
     alertDiv.className = `${classNameadd}`;
     alertDiv.innerHTML = `
         <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <strong>Success!</strong> ${message}
+         ${message}
     `;
 
     document.getElementById("alerts").appendChild(alertDiv);
@@ -142,33 +142,57 @@ Form.addEventListener('submit', (e) => {
 
                 //edit task--------------------------
 
-                    const editButton = newTaskElement.querySelector('#editTask');
-                    editButton.addEventListener('click', () => {
-                        const taskID = editButton.dataset.info;
-                        const liElement = document.getElementById(`${taskID}`)
-                        const existingInput = liElement.querySelector('input');
-                        const existingP = liElement.querySelector('p');
-                        const button = document.querySelector(`button[data-info="${taskID}"]`);
-            
-                        var icon = button.querySelector('i');
-                        console.log(button,icon) 
-                        console.log(icon.classList)
-                            
+                const editButton = newTaskElement.querySelector('#editTask');
+                editButton.addEventListener('click', () => {
+                    const taskID = editButton.dataset.info;
+                    const liElement = document.getElementById(`${taskID}`)
+                    const existingInput = liElement.querySelector('input');
+                    const existingP = liElement.querySelector('p');
+                    const button = document.querySelector(`button[data-info="${taskID}"]`);
+                    var icon = button.querySelector('i');
 
-                        if (existingInput) {
-                            icon.classList.add('fa-pencil-alt');
-                            icon.classList.remove('fa-solid','fa-check');
-                            existingInput.remove();
-                            existingP.style.display = 'block'
-                        } else {
-                            icon.classList.add('fa-solid','fa-check');   
-                            icon.classList.remove('fa-pencil-alt');
-                            existingP.style.display = 'none'
-                            const inputElement = document.createElement('input');
-                            inputElement.value = existingP.textContent
-                            liElement.appendChild(inputElement);
+                    if (existingInput) {
+                        icon.classList.add('fa-pencil-alt');
+                        icon.classList.remove('fa-solid', 'fa-check');
+                        const editedValue = existingInput.value
+
+                        if(existingP.textContent !==editedValue){
+                        existingP.textContent = editedValue
+
+                            fetch('/tasks/update', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({ taskID: taskID, newValue: editedValue })
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok.');
+                                    }
+                                    console.log(response)
+                                    addSuccessAlert("Task updated Succesfuly", successClass)
+                                })
+                                .catch(error => {
+                                    console.error('There was a problem with the POST request:', error);
+                                });
+    
                         }
-                    })
+
+                        existingInput.remove();
+                        existingP.style.display = 'block'
+                    } else {
+                        icon.classList.add('fa-solid', 'fa-check');
+                        icon.classList.remove('fa-pencil-alt');
+                        existingP.style.display = 'none'
+                        const inputElement = document.createElement('input');
+                        inputElement.value = existingP.textContent
+                        liElement.appendChild(inputElement);
+                        inputElement.focus();
+
+                    }
+                })
 
                 //end edit task--------------------------
             })
@@ -210,25 +234,49 @@ deleteTaskButton.forEach((dltbtn) => {
 
 //edit tasks--------------------------
 editTaskButton.forEach((editbtn) => {
-    editbtn.addEventListener("click", () => {
+    editbtn.addEventListener("click", async () => {
         const taskID = editbtn.dataset.info;
         const liElement = document.getElementById(`${taskID}`)
         const existingInput = liElement.querySelector('input');
         const existingP = liElement.querySelector('p');
         const button = document.querySelector(`button[data-info="${taskID}"]`);
-        console.log(button) 
         var icon = button.querySelector('i');
 
 
         if (existingInput) {
             icon.classList.add('fa-pencil-alt');
-            icon.classList.remove('fa-solid','fa-check');
+            icon.classList.remove('fa-solid', 'fa-check');
+            const editedValue = existingInput.value
+
+            if(existingP.textContent !== editedValue){
+            existingP.textContent = editedValue
+
+                fetch('/tasks/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ taskID: taskID, newValue: editedValue })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok.');
+                        }
+                        console.log(response)
+                        addSuccessAlert("Task updated Succesfuly", successClass)
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the POST request:', error);
+                    });
+
+            }
+
             existingInput.remove();
             existingP.style.display = 'block'
-
         } else {
             icon.classList.remove('fa-pencil-alt');
-            icon.classList.add('fa-solid','fa-check');
+            icon.classList.add('fa-solid', 'fa-check');
             existingP.style.display = 'none'
             const inputElement = document.createElement('input');
             inputElement.value = existingP.textContent
