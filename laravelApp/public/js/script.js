@@ -27,15 +27,30 @@ function addSuccessAlert(message, classNameadd) {
 //end alerts--------------------------
 
 //date input--------------------------
-const currentDate = new Date();
-let currentDay = currentDate.getDate();
-let currentMonth = currentDate.getMonth() + 1;
-let currentYear = currentDate.getFullYear();
-if (currentMonth < 10) {
-    currentMonth = "0" + currentMonth
-}
-DateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
-console.log(DateInput.value)
+document.addEventListener('DOMContentLoaded', function () {
+    const currentDate = new Date();
+    let currentDay = currentDate.getDate();
+    let currentMonth = currentDate.getMonth() + 1;
+    let currentYear = currentDate.getFullYear();
+
+    // Add leading zeros to day and month if needed
+    if (currentDay < 10) {
+        currentDay = "0" + currentDay;
+    }
+    if (currentMonth < 10) {
+        currentMonth = "0" + currentMonth;
+    }
+
+
+    if (DateInput) {
+        DateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
+        console.log("Setting date:", DateInput.value);
+    } else {
+        console.error("DateInput element not found!");
+    }
+});
+
+
 //end date input--------------------------
 
 
@@ -127,33 +142,36 @@ Form.addEventListener('submit', (e) => {
 
                 //edit task--------------------------
 
-                const editButton = newTaskElement.querySelector('#editTask');
-                editButton.addEventListener('click', () => {
-                    const taskID = editbtn.dataset.info;
-                    const liElement = document.getElementById(`${taskID}`)
-                    const existingInput = liElement.querySelector('input');
-                    const existingP = liElement.querySelector('p');
+                    const editButton = newTaskElement.querySelector('#editTask');
+                    editButton.addEventListener('click', () => {
+                        const taskID = editButton.dataset.info;
+                        const liElement = document.getElementById(`${taskID}`)
+                        const existingInput = liElement.querySelector('input');
+                        const existingP = liElement.querySelector('p');
+                        const button = document.querySelector(`button[data-info="${taskID}"]`);
+            
+                        var icon = button.querySelector('i');
+                        console.log(button,icon) 
+                        console.log(icon.classList)
+                            
 
-                    if (existingInput) {
-                        existingInput.remove();
-                        existingP.style.display = 'block'
-
-                    } else {
-                        existingP.style.display = 'none'
-                        const inputElement = document.createElement('input');
-                        inputElement.value = existingP.textContent
-                        liElement.appendChild(inputElement);
-                        inputElement.focus();
-                    }
-
-                })
+                        if (existingInput) {
+                            icon.classList.add('fa-pencil-alt');
+                            icon.classList.remove('fa-solid','fa-check');
+                            existingInput.remove();
+                            existingP.style.display = 'block'
+                        } else {
+                            icon.classList.add('fa-solid','fa-check');   
+                            icon.classList.remove('fa-pencil-alt');
+                            existingP.style.display = 'none'
+                            const inputElement = document.createElement('input');
+                            inputElement.value = existingP.textContent
+                            liElement.appendChild(inputElement);
+                        }
+                    })
 
                 //end edit task--------------------------
-
-
             })
-
-
     } else {
         addSuccessAlert('Input(s) are empty!', dangerClass)
     }
@@ -197,12 +215,20 @@ editTaskButton.forEach((editbtn) => {
         const liElement = document.getElementById(`${taskID}`)
         const existingInput = liElement.querySelector('input');
         const existingP = liElement.querySelector('p');
+        const button = document.querySelector(`button[data-info="${taskID}"]`);
+        console.log(button) 
+        var icon = button.querySelector('i');
+
 
         if (existingInput) {
+            icon.classList.add('fa-pencil-alt');
+            icon.classList.remove('fa-solid','fa-check');
             existingInput.remove();
             existingP.style.display = 'block'
 
         } else {
+            icon.classList.remove('fa-pencil-alt');
+            icon.classList.add('fa-solid','fa-check');
             existingP.style.display = 'none'
             const inputElement = document.createElement('input');
             inputElement.value = existingP.textContent
