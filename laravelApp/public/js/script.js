@@ -35,6 +35,7 @@ if (currentMonth < 10) {
     currentMonth = "0" + currentMonth
 }
 DateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
+console.log(DateInput.value)
 //end date input--------------------------
 
 
@@ -127,7 +128,7 @@ Form.addEventListener('submit', (e) => {
                 //edit task--------------------------
 
                 const editButton = newTaskElement.querySelector('#editTask');
-                editbtn.addEventListener('click', () => {
+                editButton.addEventListener('click', () => {
                     const taskID = editbtn.dataset.info;
                     const liElement = document.getElementById(`${taskID}`)
                     const existingInput = liElement.querySelector('input');
